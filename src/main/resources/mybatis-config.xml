@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties>
+		<property name="driver" value="com.mysql.cj.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost/test"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="123456"></property>
+	</properties>
+
+    <settings>
+        <!--mysql使用大写单词命名，单词间用下划线分割；java使用驼峰命名。-->
+        <!--为了在两种命名方式中启动自动映射，需要将mapUnderscoreToCamelCase设为true-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!--<setting name="logImpl" value="LOG4J"/>-->
+    </settings>
+
+    <typeAliases>
+        <!--<typeAlias alias="Student" type="com.ttxm.pojo.Student"/>-->
+        <package name="com.ttxm.pojo"/>
+    </typeAliases>
+	
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="mapper/StudentMapper.xml" />
+	</mappers>
+</configuration>
