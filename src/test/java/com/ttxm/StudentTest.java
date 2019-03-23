@@ -5,6 +5,8 @@ import com.ttxm.pojo.Student;
 import com.ttxm.util.SqlSessionFactorySingleton;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +17,8 @@ import java.util.List;
 
 public class StudentTest
 {
+
+
     @Test
     public void testSelect()
     {
@@ -28,9 +32,8 @@ public class StudentTest
 
             Student student = studentMapper.selectStudent(stuId);
 
-            System.out.println(student);
-
             Assert.assertNotNull("can't find student with stuid=" + stuId, student);
+
 
         }
     }
@@ -46,7 +49,12 @@ public class StudentTest
 
             List<Student> studentList = studentMapper.batchSelectStudents(Arrays.asList(1,2,3,5,9,10,12));
 
-            System.out.println(studentList);
+            Logger logger = LogManager.getLogger(getClass().getName());
+            logger.trace("trace test");
+            logger.debug("debug test");
+            logger.info("info test");
+            logger.warn("warn test");
+            logger.error("error test");
         }
     }
 
@@ -65,7 +73,8 @@ public class StudentTest
 
             List<Student> students = studentMapper.selectStudents(student);
 
-            System.out.println(students);
+            Assert.assertEquals(1, students.size());
+
         }
     }
 
@@ -76,13 +85,6 @@ public class StudentTest
 
         try(SqlSession session = sqlSessionFactory.openSession(true))
         {
-            System.out.println("before insert: ");
-
-            List<Object> oldList = session.selectList("com.ttxm.mapper.StudentMapper.selectStudent");
-            System.out.println(oldList);
-
-            //-------------------before insert----------------------------
-
             StudentMapper studentMapper = session.getMapper(StudentMapper.class);
 
             Student student = new Student();
@@ -91,17 +93,7 @@ public class StudentTest
             student.setBirth(LocalDate.of(1991, 12, 10));
 
             Integer result = studentMapper.insertStudent(student);
-
-            System.out.println("insert result=" + result);
-
-            //--------------------after insert----------------------------
-
-            System.out.println("after insert: ");
-
-            List<Object> newList = session.selectList("com.ttxm.mapper.StudentMapper.selectStudent");
-            System.out.println(newList);
-
-            Assert.assertNotEquals("insert failed", oldList.size(), newList.size());
+            Assert.assertEquals(1, result.longValue());
 
         }
     }
@@ -113,13 +105,6 @@ public class StudentTest
 
         try(SqlSession session = sqlSessionFactory.openSession(true))
         {
-            System.out.println("before batch insert: ");
-
-            List<Object> oldList = session.selectList("com.ttxm.mapper.StudentMapper.selectStudent");
-            System.out.println(oldList);
-
-            //-------------------before insert----------------------------
-
             StudentMapper studentMapper = session.getMapper(StudentMapper.class);
 
             List<Student> studentList = new ArrayList<>();
@@ -147,17 +132,7 @@ public class StudentTest
 
             Integer result = studentMapper.batchInsertStudents(studentList);
 
-            System.out.println("insert rows = " + result);
-
-            //--------------------after insert----------------------------
-
-            System.out.println("after batch insert: ");
-
-            List<Object> newList = session.selectList("com.ttxm.mapper.StudentMapper.selectStudent");
-            System.out.println(newList);
-
-            Assert.assertNotEquals("insert failed", oldList.size(), newList.size());
-
+            Assert.assertEquals(3, result.longValue());
         }
     }
 
@@ -171,15 +146,13 @@ public class StudentTest
             StudentMapper studentMapper = session.getMapper(StudentMapper.class);
 
             Student student = new Student();
-            student.setStuId(66);
+            student.setStuId(27);
             student.setStuName("isabella ling");
             student.setBirth(LocalDate.of(1991, 12, 30));
 
             Integer result = studentMapper.updateStudent(student);
 
-            System.out.println("udpate result=" + result);
-
-            Assert.assertNotEquals("update failed", 0, result.longValue());
+            Assert.assertEquals(1, result.longValue());
         }
     }
 
@@ -192,7 +165,9 @@ public class StudentTest
         {
             StudentMapper studentMapper = session.getMapper(StudentMapper.class);
 
+            Integer result = studentMapper.deleteStudent(26);
 
+            Assert.assertEquals(1, result.longValue());
         }
     }
 
